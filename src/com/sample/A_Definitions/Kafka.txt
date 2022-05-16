@@ -1,0 +1,159 @@
+https://www.projectpro.io/article/kafka-interview-questions-and-answers/438
+
+# start zookeeper -----------------------------------
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+# start kafka brokers (Servers = cluster) -----------------------------------
+bin/kafka-server-start.sh config/server.properties
+
+# create a topic -----------------------------------
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+
+# List existing topics -----------------------------------
+bin/kafka-topics.sh --zookeeper localhost:2181 --list
+
+# Describe a topic -----------------------------------
+bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topic mytopic
+
+# Purge a topic -----------------------------------
+bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic mytopic --config retention.ms=1000
+... wait a minute ...
+bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic mytopic --delete-config retention.ms
+
+# Delete a topic -----------------------------------
+bin/kafka-topics.sh --zookeeper localhost:2181 --delete --topic mytopic
+
+# list all topic -----------------------------------
+bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+# configure brokers to auto-create topics when a non-existent topic is published to
+
+# see topic details (partition, replication factor) -----------------------------------
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test
+
+# change partition number of a topic --alter -----------------------------------
+# Note: While Kafka allows us to add more partitions, it is NOT possible to decrease number of partitions of a Topic. 
+# In order to achieve this, you need to delete and re-create your Topic.
+bin/kafka-topics.sh --alter --zookeeper localhost:2181 --topic test --partitions 3
+
+# PRODUCER -----------------------------------
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+
+# CONSUMER -----------
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --from-beginning --topic test
+
+# removed --from-beginning => consumer only gets message that is produced after it is up
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
+
+#Kafka CONNECT-----------------------------
+# 2 stand-alone connectors (run in a single,local,dedicated process)
+bin/connect-standalone.sh \ 
+  config/connect-standalone.properties \
+  config/connect-file-source.properties \
+  config/connect-file-sink.properties
+
+
+
+# Get number of messages in a topic ???
+bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic mytopic --time -1 --offsets 1 | awk -F ":" '{sum += $3} END {print sum}'
+
+# Get the earliest offset still in a topic
+bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic mytopic --time -2
+
+# Get the latest offset still in a topic
+bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic mytopic --time -1
+
+# Consume messages with the console consumer
+bin/kafka-console-consumer.sh --new-consumer --bootstrap-server localhost:9092 --topic mytopic --from-beginning
+
+# Get the consumer offsets for a topic
+bin/kafka-consumer-offset-checker.sh --zookeeper=localhost:2181 --topic=mytopic --group=my_consumer_group
+
+# Read from __consumer_offsets
+# Add the following property to config/consumer.properties: exclude.internal.topics=false
+
+bin/kafka-console-consumer.sh --consumer.config config/consumer.properties --from-beginning --topic __consumer_offsets --zookeeper localhost:2181 --formatter "kafka.coordinator.GroupMetadataManager\$OffsetsMessageFormatter"
+
+
+### How Kafka Pagination works 
+ 
+==================================================================================================== 
+https://blog.clairvoyantsoft.com/kafka-and-spark-usage-in-transaction-processing-3f4c80529df1
+Kafka :
+how do you handle duplicate messages in kafka ?
+how do you handle failed financial transaction in kafka ?
+how do you handle financial authentication in kafka ?
+how to reduce processing time in a kafka architecture ?
+
+Pods :
+how to check logs for a specific pod ?
+what are the Pod spcific configuration required in yml ?
+
+===================================================================================================
+### How does Kafka handle broker failure?
+If any broker fails, data should not be lost. For fault-tolerance purposes, the partition is replicated and stored in different brokers. 
+If leader brokers fail, then the controller will elects one of the replicas as the leader.
+
+### How do you ensure order of messages in Kafka?
+Kafka does not guarantee ordering of messages between partitions. It does provide ordering within a partition. Thus, Kafka can maintain message ordering by a consumer if it is subscribed to only a single partition. Messages can also be ordered using the key to be grouped by during processing
+
+
+### what happens if kafka server goes down ?
+
+
+#### How does Kafka handle duplicate messages?
+Specifically, if Apache Kafka invokes a message handler more than once for the same message, it detects and discards any duplicate messages produced by the handler. The message handler will still execute the database transaction repeatedly
+
+
+### Does Kafka guarantee exactly once delivery?
+Kafka supports three types of Message Delivery Guarantees. ... Exactly-once: Every message is guaranteed to be persisted in Kafka exactly once without any duplicates and data loss even where there is a broker failure or producer retry
+
+### how-to-handle-kafka-publishing-failure-in-robust-way
+https://stackoverflow.com/questions/40183133/how-to-handle-kafka-publishing-failure-in-robust-way
+You can write a custom call back for your producer and this call back can tell you if the message has failed or successfully published. On failure, log the meta data for the message.Now, you can use log analyzing tools to analyze your failures. 
+Kafka by default supports at-least once message delivery semantics, it means when it try to send a message something happens, it will try to resend it.
+To avoid a down Zookeeper, deploy at least 3 instances of Zookeepers (if this is in AWS, deploy them across availability zones). To avoid broker failures, deploy multiple brokers, and ensure you're specifying multiple brokers in your producer bootstrap.servers property. To ensure that the Kafka cluster has written your message in a durable manor, ensure that the acks=all property is set in the producer. This will acknowledge a client write when all in-sync replicas acknowledge reception of the message (at the expense of throughput). You can also set queuing limits to ensure that if writes to the broker start backing up you can catch an exception and handle it and possibly retry.
+
+
+37. How can Kafka be tuned for optimal performance?
+--> Tuning for optimal performance involves consideration of two key measures : latency measures, which denote the amount of time taken to process one event, and throughput measures, which refer to how many events can be processed in a specific amount of time. Most systems are optimized for either latency or throughput, while Kafka can balance both. Tuning Kafka for optimal performance involves the following steps:
+
+Tuning Kafka producers: Data that the producers have to send to brokers is stored in a batch. When the batch is ready, the producer sends it to the broker. For latency and throughput, to tune the producers, two parameters must be taken care of: batch size and linger time. The batch size has to be selected very carefully. If the producer is sending messages all the time, larger batch size is preferable to maximize throughput. However, if the batch size is chosen to be very large, then it may never get full, or take a long time to fill up and in turn, affect the latency. Batch size will have to be determined taking into account the nature of the volume of messages sent from the producer. The linger time is added to create a delay to wait for more records to get filled up in the batch so that larger records are sent. A longer linger time, will allow more messages to be sent in one batch, but this could compromise latency. On the other hand, a shorter linger time will result in fewer messages getting sent faster - reduced latency but reduced throughput as well.
+Tuning Kafka broker: Each partition in a topic is associated with a leader, which will further have 0 or more followers. It is important that the leaders are balanced properly, and ensure that some nodes are not overworked compared to the others.
+Tuning Kafka Consumers: It is recommended that the number of partitions for a topic is equal to the number of consumers so that the consumers can keep up with the producers. In the same consumer group, the partitions are split up among the consumers.
+
+
+39. Is it possible to add partitions to an existing topic in Kafka?
+--> Apache Kafka provides the alter command to change a topic behavior and modify the configurations associated with it. The alter command can be used to add more partitions.
+
+The command to increase the partitions to 4 is as follows:
+./bin/kafka-topics.sh --alter --zookeeper localhost:2181 --topic my-topic --partitions 4
+
+41. How does one view a Kafka message?
+--> The Kafka-console-consumer.sh command can be used to view the messages. 
+The following command can be used to view the messages from a topic :
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+
+48. What is the Confluent Replicator?
+
+The Confluent Replicator allows easy and reliable replication of topics from a source cluster to a destination cluster. It continuously copies messages from the source to the destination and even assigns the same names to the topics in the destination cluster.
+
+49. How can load balancing be ensured in Kafka when one server fails?
+
+In Kafka, when a server fails, if it was the leader for any partition, one of its followers will take on the role of being the new leader. For this to happen, the topic replication factor has to be more than 1, i.e. the leader should have at least one follower to take on the new role of leader.
+
+50. Where is the meta-information about topics stored in the Kafka cluster?
+
+Currently, in Apache Kafka, meta-information about topics is stored in the ZooKeeper. Information regarding the location of the partitions and the configuration details related to a topic are stored in the ZooKeeper in a separate Kafka cluster.
+
+51. How can large messages be sent in Kafka?
+
+By default, the largest size of a message that can be sent in Kafka is 1MB. 
+In order to send larger messages using Kafka, a few properties have to be adjusted. 
+Here are the configuration details that have to be updated
+
+At the Consumer end – fetch.message.max.bytes
+At the Broker, end to create replica– replica.fetch.max.bytes
+At the Broker, the end to create a message – message.max.bytes
+At the Broker end for every topic – max.message.bytes
+ 

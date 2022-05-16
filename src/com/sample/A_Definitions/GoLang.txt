@@ -1,0 +1,124 @@
+### how to define structure inside structure to call same method
+A -> test , B-> test, C-> A+B (?test)
+### what are different types of channel
+### when to use buffer channel
+### when to use un-buffer channel
+### create a dead lock on buffer channel and non buffer channel
+### how do you expose the metrics data using RestAPI
+### GoLang GoRoutines vs Go channels
+
+
+### Channel Syntax for sending and receiving data
+    // Only for receiving
+    mychanl1 := make(<-chan string)
+  
+    // Only for sending
+    mychanl2 := make(chan<- string)
+    
+    // Creating a bidirectional channel
+    mychanl := make(chan string)
+
+
+###  Q20. Why does Golang develop?
+	Golang is developed out of the difficulty in existing environments and languages for system programming.
+	Go is an effort to have:
+		Dynamically typed language and interpreted language
+		Compiled language and the safety and efficiency of statistically typed
+		To be fast in the compilation
+		To support the multi-core computing
+
+###  Q17. Mention the advantages of Golang?
+	It contains a garbage collector
+	Go compiles very quickly
+	Maps and strings are built into the language
+	First-class objects are functions in this language
+	Golang is faster than other programming languages, which enhances the availability and reliability of services.
+	It's easy to learn.
+	Another significant advantage of using Golang is its ability to support concurrency.
+	Professionals with Golang expertise are growing. The demand for this programming language is increasing and is ranking 
+	under the top 10 positions for the last few years under various language ranking indices.
+
+###  Q20. How many Goroutines are in a thread?
+	At any point in time, one thread will be executing one goroutine and if that goroutine is blocked, 
+	then it will be swapped out for another goroutine that will execute on that thread instead.
+
+###  Q30. What is the channel in Golang?
+	A channel is a communication medium through which a Goroutine communicates with different Goroutine and this communication is 
+	lock-free.Practically, in other words, a channel is a method that enables an individual Goroutine to send data to a 
+	different Goroutine. 
+	
+###  Q40. Explain Goroutines?
+	Goroutines are functions or methods which run on other functions or methods concurrently. 
+	They are lightweight threads. The cost of creating Goroutines is small compared to threads. 
+	To stop using goroutines, you need to pass a signal channel to the goroutine, 
+	and that signal pushes a value into when you want the goroutine to stop.	
+
+###  @39. How do I stop such a goroutine?
+	Typically, you pass the goroutine a (possibly separate) signal channel. 
+	That signal channel is used to push a value into when you want the goroutine to stop.
+	The goroutine polls that channel regularly. As soon as it detects a signal, it quits.
+	
+	
+	func main() {
+		var wg sync.WaitGroup
+	    wg.Add(1)
+		quit := make(chan bool)
+		go func() {
+		    for {
+				channel, ok := <-quit
+				if !ok {
+					fmt.Println("Shut Down")
+					defer wg.Done()
+					return
+				}
+				fmt.Println(channel)
+		    }
+		}()
+		// Quit goroutine	
+		quit <- true
+		wg.Wait()
+	}
+
+###  Q15. Can you return multiple values from a function?
+	Yes. A Go function can return multiple values, each separated by commas in the return statement.
+
+###  Q24. What is the GoPATH variable in Golang?
+	The GoPATH environment variable is employed to symbolized directories out of $GoROOT that combines the source for Go projects 
+	including their binaries.
+
+###  Q25. What is the GoROOT variable in Golang?
+	GoROOT is a variable that determines wherever your Go SDK is located. You do not require to modify this variable except you plan 
+	to use various Go versions. GoPATH is a variable that determines the root of your workspace.
+
+###  Q26. Explain structures in Golang?
+	A struct or a structure of Golang is a user-defined variety that helps the group or combines items of various types into 
+	a single type, each real-world entity that holds some characteristics can be represented as a structure.	
+
+###  Q10. List the operators in Golang?
+	Arithmetic operators
+	Bitwise operators
+	Relational operators
+	Logical operators
+	Assignment operators
+	Misc operators
+
+###  Q11. List data types on Golang?
+	There are 4 data types in the Go language
+	Basic type numbers, strings, and booleans
+	Aggregate type structures and arrays
+	Reference type slices, pointers, maps, channels, and functions
+	Interface type
+
+
+###  Q14. What is Golang workspace?
+	The workspace of Golang includes three directories as its roots, workspace carries Go code, the three root directories are:
+	“Src” the source file regulated into packages 
+	“Pkg” package objects are stored in the directory
+	“Bin” contains executable commands
+
+###  Q18. How can we declare the multiple types of variables in a single code line in Golang?
+	Yes, we can declare various type variables in a single code declaration like the example below:
+	var x,y,a= 8, 10.1, “appmajix”
+	
+	
+	

@@ -1,0 +1,112 @@
+#1 : Interview Question topics. [https://www.youtube.com/watch?v=AoaKMNV0SEU]   >>>>>>>>>>
+What is Kubernetes Architecture in 1.7 ? {master-controller,scheduler,kube-api Services, //slave-, Container engine,kubelets,kube proxy}
+what are the best practices to make your application Highly Available ?
+How many clusters do you support in ur project ?
+when you create a cluster IP ?
+what is headless ?
+what are the types of scaling in kubernetes HPA vs VPA ?
+what is difference between HPA Vs VPA , what is the use ?
+What are the default name spaces created as part of kubernetes ? [1.default 2. Kube-System 3. Kube-Public]
+What is resource-quota ?
+why resource-quota is allocated to name space ?
+what are the volume types available in kubernetes ?
+What is a persistent volume in Kubernetes? //https://www.tutorialspoint.com/kubernetes/kubernetes_volumes.htm
+What is emptyDir volume in Kubernetes?
+What is NFS volume?
+What problem you face while using config-map or helm ?
+How to make sure a dataBase container can receives request from a specific pod/specific IP only ?[use Network Policy]
+What configuration you add in Network policy for above query ?
+How do Pods communicate in Kubernetes?  https://www.tutorialworks.com/kubernetes-pod-communication/
+How does a frontend pod communicate with a backend pod? https://www.tutorialworks.com/kubernetes-pod-communication/
+How do containers in the same Pod communicate? https://www.tutorialworks.com/kubernetes-pod-communication/
+What is pod selector and Label used for ?
+what is the pod readyness probe status when it shows 0/1 in kubectl get pods ?
+What is POD disruption budget Kubernetes?
+what is control loop mechanism in kubernetes ?
+
+<<<<<<<<< Interview #2 : https://www.youtube.com/watch?v=R2hGaEol1-o >>>>>>>>>>
+What is kube controller ?
+What is kube scheduler ?
+What is kube api services ?
+what is kubelets ?
+what is container engine ?
+what is kube Proxy ?
+Which is and why is best 1Pod-Multiple Containers or MultiPod-MultiContainers ?
+what is side car containers ?
+what is difference between stateful-sets vs deployment set ?
+what are the different objects used in your project ? [deployment, config,deployment, service account]
+what is the use of service account ?
+what is ingress controller i.e. used to access ur application to outside world ?
+what is config map ?
+what is difference between secrets vs config map ?
+what is static pod ?
+why daemon sets are required ?
+How HA is set up at pod level , liveness/readyness pro ?
+why we cannot deploy the pod to master by default ?
+How to decide a specific pod to deploy in a particular node ?
+How to create name space for pod ?
+what is RBAC-RoleBasedAccessController ?
+What is PVC ?
+<<<<<<<<< Interview #3 : https://www.youtube.com/watch?v=21JhazrHD10  >>>>>>>>>>
+why selectors and labels are important to redirect request to a pod ?
+what is roll out history for a pod ?
+Is there Auto-Scaling for Pod mechanism in kubernetes ? [HPA/VPA]
+On what criteria/basis it will increase / decrease creating more pods ?
+What are the objects to be created for a Database pod ?
+What are the objects to be created for a Application pod ?
+Why there need to be different objects for DB vs App pod ?
+What is rolling Update pattern ?
+what is Canorlling re-deployment ?
+
+<<<<<<<<< Interview #4 : https://www.youtube.com/watch?v=IEFgbGRartM  >>>>>>>>>>
+What are the monitoring solutions in Kubernets ?[Prometheus/Grafana/ELK]
+what are difference between deployments vs replicaSet ?
+When do you use StateFull sets ?
+Does the IP Address retained in a StateFull set when the POD is deleted ?
+A pod is not coming up in a Node, What are the list of reasons it might have ?
+What are the reasons when the container doesn't come up ?
+What are the different components in Kubernets ?
+
+ 
+
+Kubernetes Developer :
+. Creating Objects
+. Services in kubernetes : headless
+. when you create a cluster IP ?
+
+. Load balancer between pods
+. master and slave pods
+. replicas 
+. 
+. Deployements
+. Pod security policies
+. Network policies
+
+. Liveness pro
+. Readyness pro
+. StartUp pro
+
+. . what are the best practices to make your application Highly Available ?
+[ HPA / VPA / Replicas / Livenesspro/ Readyness pro/ Network Policies / init containers]
+
+. init containers
+. application containers
+. stateful / stateless
+
+< Kubernetes NameSpace >
+ 1. default: As its name implies, this is the namespace that is referenced by default for every Kubernetes command, and where every Kubernetes resource is located by default. Until new namespaces are created, the entire cluster resides in ‘default’.
+ 2. kube-system: Used for Kubernetes components and should be avoided.
+ 3. kube-public: Used for public resources. Not recommended for use by users
+ 
+ < Types of Kubernetes Volume >
+ emptyDir 
+ hostPath 
+ gcePersistentDisk 
+ awsElasticBlockStore 
+ nfs 
+ iscsi 
+ flocker 
+ glusterfs 
+ persistentVolumeClaim 
+ 
+ 
